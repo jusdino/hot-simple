@@ -1,42 +1,42 @@
 e = 0.01;
 
-COLLAR_INNER_DIA = 12;
-COLLAR_OUTER_DIA = 16;
-COLLAR_SEG_1_DY = 3.7;
-COLLAR_SEG_2_DY = 6;
-COLLAR_SEG_3_DY = 3;
+collar_inner_dia = 12;
+collar_outer_dia = 16;
+collar_seg_1_dy = 3.7;
+collar_seg_2_dy = 6;
+collar_seg_3_dy = 3;
 
-INNER_SEG_1_DIA = 9;
-INNER_SEG_1_DY = 4;
+inner_seg_1_dia = 9;
+inner_seg_1_dy = 4;
 
-INNER_SEG_2_D1 = 9.0;
-INNER_SEG_2_D2 = 12.6;
-INNER_SEG_2_DY = 26;
+inner_seg_2_d1 = 9.0;
+inner_seg_2_d2 = 12.6;
+inner_seg_2_dy = 26;
 
-GILL_DY = 1;
-GILL_DIA = 22;
-GILL_COUNT = 11;
+gill_dy = 1;
+gill_dia = 22;
+gill_count = 11;
 
-NECK_DIA = 2.75;
-NECK_DY = 3;
+neck_dia = 2.75;
+neck_dy = 3;
 
-BLOCK_X = 16;
-BLOCK_Y = 23;
-BLOCK_Z = 11.5;
-BLOCK_Y_OFFSET = 6.8;
+block_x = 16;
+block_y = 23;
+block_z = 11.5;
+block_y_offset = 6.8;
 
-NOZZLE_NUT_DY = 3;
-NOZZLE_NUT_SIZE = 7;
-NOZZLE_CONE_DY = 2;
-NOZZLE_CONE_D1 = 3;
-NOZZLE_CONE_D2 = 0.6;
+nozzle_nut_dy = 3;
+nozzle_nut_size = 7;
+nozzle_cone_dy = 2;
+nozzle_cone_d1 = 3;
+nozzle_cone_d2 = 0.6;
 
-E3D_TOTAL_DY = COLLAR_SEG_1_DY + COLLAR_SEG_2_DY + COLLAR_SEG_3_DY + INNER_SEG_1_DY + INNER_SEG_2_DY + NECK_DY + BLOCK_Z + NOZZLE_NUT_DY + NOZZLE_CONE_DY;
+e3d_total_dy = collar_seg_1_dy + collar_seg_2_dy + collar_seg_3_dy + inner_seg_1_dy + inner_seg_2_dy + neck_dy + block_z + nozzle_nut_dy + nozzle_cone_dy;
 
 module e3d_v6(coords) {
   translate(coords) {
     rotate([90, 0, 0]) {
-      // Push fitting
+      // push fitting
       color([0.1, 0.1, 0.1]) translate([0, 0, -2.25]) {
         difference() {
           cylinder(h=2.25, d=7);
@@ -45,38 +45,38 @@ module e3d_v6(coords) {
           }
         }
       }
-      // Collar
-      cylinder(h=COLLAR_SEG_1_DY, d=COLLAR_OUTER_DIA);
-      translate([0, 0, COLLAR_SEG_1_DY]) {
-        translate([0, 0, -e]) cylinder(h=COLLAR_SEG_2_DY+2*e, d=COLLAR_INNER_DIA);
-        translate([0, 0, COLLAR_SEG_2_DY]) {
-          cylinder(h=COLLAR_SEG_3_DY, d=COLLAR_OUTER_DIA);
-          translate([0, 0, COLLAR_SEG_3_DY]) {
-            cylinder(h=INNER_SEG_1_DY, d=INNER_SEG_1_DIA);
-            // Small gill
-            translate([0, 0, INNER_SEG_1_DY/2-GILL_DY/2]) {
-              cylinder(h=GILL_DY, d=COLLAR_OUTER_DIA);
+      // collar
+      cylinder(h=collar_seg_1_dy, d=collar_outer_dia);
+      translate([0, 0, collar_seg_1_dy]) {
+        translate([0, 0, -e]) cylinder(h=collar_seg_2_dy+2*e, d=collar_inner_dia);
+        translate([0, 0, collar_seg_2_dy]) {
+          cylinder(h=collar_seg_3_dy, d=collar_outer_dia);
+          translate([0, 0, collar_seg_3_dy]) {
+            cylinder(h=inner_seg_1_dy, d=inner_seg_1_dia);
+            // small gill
+            translate([0, 0, inner_seg_1_dy/2-gill_dy/2]) {
+              cylinder(h=gill_dy, d=collar_outer_dia);
             }
-            // Gills
-            translate([0, 0, INNER_SEG_1_DY]) {
-              cylinder(d2=INNER_SEG_2_D2, d1=INNER_SEG_2_D1, h=INNER_SEG_2_DY);
-              for(i = [0: GILL_COUNT-1]) {
-                translate([0, 0, i*((INNER_SEG_2_DY-GILL_DY)/(GILL_COUNT-1))]) {
-                  cylinder(h=GILL_DY, d=GILL_DIA);
+            // gills
+            translate([0, 0, inner_seg_1_dy]) {
+              cylinder(d2=inner_seg_2_d2, d1=inner_seg_2_d1, h=inner_seg_2_dy);
+              for(i = [0: gill_count-1]) {
+                translate([0, 0, i*((inner_seg_2_dy-gill_dy)/(gill_count-1))]) {
+                  cylinder(h=gill_dy, d=gill_dia);
                 }
               }
-              // Filament neck
-              translate([0, 0, INNER_SEG_2_DY]) {
-                cylinder(h=NECK_DY, d=NECK_DIA);
-                translate([-BLOCK_X/2, -BLOCK_Y+BLOCK_Y_OFFSET, NECK_DY]) {
-                  // Heat block
-                  cube([BLOCK_X, BLOCK_Y, BLOCK_Z]);
+              // filament neck
+              translate([0, 0, inner_seg_2_dy]) {
+                cylinder(h=neck_dy, d=neck_dia);
+                translate([-block_x/2, -block_y+block_y_offset, neck_dy]) {
+                  // heat block
+                  cube([block_x, block_y, block_z]);
                 }
-                // Nozzle
-                color([0.8, 0.7, 0]) translate([0, 0, NECK_DY+BLOCK_Z]) {
-                  cylinder(h=NOZZLE_NUT_DY, d=NOZZLE_NUT_SIZE*2/sqrt(3),$fn=6);
-                  translate([0, 0, NOZZLE_NUT_DY]) {
-                    cylinder(d1=NOZZLE_CONE_D1, d2=NOZZLE_CONE_D2, h=NOZZLE_CONE_DY);
+                // nozzle
+                color([0.8, 0.7, 0]) translate([0, 0, neck_dy+block_z]) {
+                  cylinder(h=nozzle_nut_dy, d=nozzle_nut_size*2/sqrt(3),$fn=6);
+                  translate([0, 0, nozzle_nut_dy]) {
+                    cylinder(d1=nozzle_cone_d1, d2=nozzle_cone_d2, h=nozzle_cone_dy);
                   }
                 }
               }

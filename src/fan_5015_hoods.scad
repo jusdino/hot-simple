@@ -3,127 +3,127 @@ include <connectors.scad>;
 
 e = 0.01;
 
-INTAKE_5015_WALL_THICKNESS = 0.48;
-INTAKE_5015_RIM_THICKNESS = 1.2;
-INTAKE_5015_SIDE_THICKNESS = 3+INTAKE_5015_WALL_THICKNESS;
-OUTLET_WALL_THICKNESS_5015 = 1.6;
-OUTLET_NOZZLE_OVERLAP_5015 = 1.45;
-DUCT_DY_5015 = 9;
+intake_5015_wall_thickness = 0.48;
+intake_5015_rim_thickness = 1.2;
+intake_5015_side_thickness = 3+intake_5015_wall_thickness;
+outlet_wall_thickness_5015 = 1.6;
+outlet_nozzle_overlap_5015 = 1.45;
+duct_dy_5015 = 11;
 
 module fan_5015_hood(connector_e3d_dy, include_fan=false) {
-  INTAKE_5015_COVER_DIA = MAIN_DIA_5015 - 4;
+  intake_5015_cover_dia = main_dia_5015 - 4;
 
-  OUTLET_LATCH_HOLE_DX = 13.0;
-  OUTLET_LATCH_HOLE_DZ = 5.0;
+  outlet_latch_hole_dx = 13.0;
+  outlet_latch_hole_dz = 5.0;
 
-  SCREW_INSERT_DEPTH = 2;
+  screw_insert_depth = 2;
 
-  CONNECTOR_DX = 0;
+  connector_dx = 0;
 
-  translate([-OUTLET_X_5015+OUTLET_WALL_THICKNESS_5015+DUCT_DY_5015, -MAIN_DY_5015/2-OUTLET_TOLERANCE_5015+OUTLET_NOZZLE_OVERLAP_5015, -MAIN_DZ_5015-INTAKE_5015_SIDE_THICKNESS+PIN_DIA/2]) {
+  translate([-outlet_x_5015+outlet_wall_thickness_5015+duct_dy_5015, -main_dy_5015/2-outlet_tolerance_5015+outlet_nozzle_overlap_5015, -main_dz_5015-intake_5015_side_thickness+pin_dia/2]) {
     if(include_fan) {
       translate([0, 0, 0]) {
         fan_5015();
       }
     }
     color([0.5, 0.1, 0.1]) {
-      translate([0, 0, MAIN_DZ_5015]) {
-        // Intake cover
+      translate([0, 0, main_dz_5015]) {
+        // intake cover
         difference() {
-          cylinder(h=INTAKE_5015_SIDE_THICKNESS, d=INTAKE_5015_COVER_DIA);
+          cylinder(h=intake_5015_side_thickness, d=intake_5015_cover_dia);
           translate([0, 0, -e]) {
-            cylinder(h=INTAKE_5015_SIDE_THICKNESS-INTAKE_5015_WALL_THICKNESS+e, d=INTAKE_5015_COVER_DIA-2*INTAKE_5015_RIM_THICKNESS);
-          } // Cover vent slots
-          translate([0, 0, INTAKE_5015_WALL_THICKNESS]) {
+            cylinder(h=intake_5015_side_thickness-intake_5015_wall_thickness+e, d=intake_5015_cover_dia-2*intake_5015_rim_thickness);
+          } // cover vent slots
+          translate([0, 0, intake_5015_wall_thickness]) {
             for (i=[0:5]) {
               rotate([0, 0, -(180-30*i)]) {
                 rotate_extrude(angle=25) {
-                  translate([INTAKE_5015_COVER_DIA/4, 0, 0]) {
-                      square([INTAKE_5015_COVER_DIA/4+e, INTAKE_5015_SIDE_THICKNESS-2*INTAKE_5015_WALL_THICKNESS]);
+                  translate([intake_5015_cover_dia/4, 0, 0]) {
+                      square([intake_5015_cover_dia/4+e, intake_5015_side_thickness-2*intake_5015_wall_thickness]);
                   }
                 }
               }
             }
           }
         }
-        // Outlet and screw cover
+        // outlet and screw cover
         difference() {
           union() {
             hull() {
-              // Cube over outlet side
-              translate([OUTLET_X_5015-OUTLET_WALL_THICKNESS_5015, OUTLET_Y_5015-OUTLET_TOLERANCE_5015/2-OUTLET_DY_5015-OUTLET_WALL_THICKNESS_5015, 0]) {
-                cube([-OUTLET_X_5015+OUTLET_WALL_THICKNESS_5015, OUTLET_DY_5015+OUTLET_TOLERANCE_5015+2*OUTLET_WALL_THICKNESS_5015, INTAKE_5015_SIDE_THICKNESS]);
-                // Connector backing
-                translate([0, (OUTLET_DY_5015+2*OUTLET_WALL_THICKNESS_5015+OUTLET_TOLERANCE_5015)-3, 0]) {
-                  cube([-connector_e3d_dy-DUCT_DY_5015+PIN_DIA, 3, INTAKE_5015_SIDE_THICKNESS]);
+              // cube over outlet side
+              translate([outlet_x_5015-outlet_wall_thickness_5015, outlet_y_5015-outlet_tolerance_5015/2-outlet_dy_5015-outlet_wall_thickness_5015, 0]) {
+                cube([-outlet_x_5015+outlet_wall_thickness_5015, outlet_dy_5015+outlet_tolerance_5015+2*outlet_wall_thickness_5015, intake_5015_side_thickness]);
+                // connector backing
+                translate([0, (outlet_dy_5015+2*outlet_wall_thickness_5015+outlet_tolerance_5015)-3, 0]) {
+                  cube([-connector_e3d_dy-duct_dy_5015+pin_dia, 3, intake_5015_side_thickness]);
                 }
               }
-              // Screw mount
-              translate(SCREW_HOLE_1_COORDS_5015) {
-                cylinder(h=INTAKE_5015_SIDE_THICKNESS, d=SCREW_MOUNT_DIA_5015);
+              // screw mount
+              translate(screw_hole_1_coords_5015) {
+                cylinder(h=intake_5015_side_thickness, d=screw_mount_dia_5015);
               }
             }
-            // Screw hole insert
-            translate(SCREW_HOLE_1_COORDS_5015) {
-              translate([0, 0, -SCREW_INSERT_DEPTH]) {
-                cylinder(h=SCREW_INSERT_DEPTH+e, d=SCREW_HOLE_DIA_5015-SCREW_HOLE_TOLERANCE_5015);
+            // screw hole insert
+            translate(screw_hole_1_coords_5015) {
+              translate([0, 0, -screw_insert_depth]) {
+                cylinder(h=screw_insert_depth+e, d=screw_hole_dia_5015-screw_hole_tolerance_5015);
               }
             }
           }
-          // Cut intake cylinder
+          // cut intake cylinder
           translate([0, 0, -e]) {
-            cylinder(h=INTAKE_5015_SIDE_THICKNESS+2*e, d=INTAKE_5015_COVER_DIA-e);
+            cylinder(h=intake_5015_side_thickness+2*e, d=intake_5015_cover_dia-e);
           }
-          // Screw hole
-          translate(SCREW_HOLE_1_COORDS_5015) {
-            translate([0, 0, -SCREW_INSERT_DEPTH-e]) {
-              cylinder(h=SCREW_INSERT_DEPTH+INTAKE_5015_SIDE_THICKNESS+2*e, d=3);
+          // screw hole
+          translate(screw_hole_1_coords_5015) {
+            translate([0, 0, -screw_insert_depth-e]) {
+              cylinder(h=screw_insert_depth+intake_5015_side_thickness+2*e, d=3);
             }
           }
         }
-        // Connector
-        translate([OUTLET_X_5015-OUTLET_WALL_THICKNESS_5015-DUCT_DY_5015-connector_e3d_dy, OUTLET_Y_5015+OUTLET_WALL_THICKNESS_5015+OUTLET_TOLERANCE_5015/2-e, INTAKE_5015_SIDE_THICKNESS-PIN_DIA/2]) {
+        // connector
+        translate([outlet_x_5015-outlet_wall_thickness_5015-duct_dy_5015-connector_e3d_dy, outlet_y_5015+outlet_wall_thickness_5015+outlet_tolerance_5015/2-e, intake_5015_side_thickness-pin_dia/2]) {
           rotate([0, 90, 90]) {
             pin_tab(7.5+e);
           }
         }
-        // Outlet frame
-        translate([OUTLET_X_5015-OUTLET_WALL_THICKNESS_5015, OUTLET_Y_5015-OUTLET_DY_5015-OUTLET_TOLERANCE_5015/2-OUTLET_WALL_THICKNESS_5015, 0]) {
-          translate([0, 0, -MAIN_DZ_5015-OUTLET_TOLERANCE_5015-OUTLET_WALL_THICKNESS_5015]) {
-            cube([2*OUTLET_WALL_THICKNESS_5015, OUTLET_WALL_THICKNESS_5015, MAIN_DZ_5015+OUTLET_TOLERANCE_5015+OUTLET_WALL_THICKNESS_5015+e]);
+        // outlet frame
+        translate([outlet_x_5015-outlet_wall_thickness_5015, outlet_y_5015-outlet_dy_5015-outlet_tolerance_5015/2-outlet_wall_thickness_5015, 0]) {
+          translate([0, 0, -main_dz_5015-outlet_tolerance_5015-outlet_wall_thickness_5015]) {
+            cube([2*outlet_wall_thickness_5015, outlet_wall_thickness_5015, main_dz_5015+outlet_tolerance_5015+outlet_wall_thickness_5015+e]);
             difference() {
-              cube([OUTLET_WALL_THICKNESS_5015, OUTLET_DY_5015+OUTLET_TOLERANCE_5015+2*OUTLET_WALL_THICKNESS_5015, MAIN_DZ_5015+OUTLET_TOLERANCE_5015+2*OUTLET_WALL_THICKNESS_5015]);
-              translate([-e, (OUTLET_DY_5015-OUTLET_INNER_DY_5015)/2+OUTLET_WALL_THICKNESS_5015, (MAIN_DZ_5015-OUTLET_INNER_DZ_5015)/2+OUTLET_WALL_THICKNESS_5015]) {
-                cube([OUTLET_WALL_THICKNESS_5015+2*e, OUTLET_INNER_DY_5015+OUTLET_TOLERANCE_5015, OUTLET_INNER_DZ_5015+OUTLET_TOLERANCE_5015]);
+              cube([outlet_wall_thickness_5015, outlet_dy_5015+outlet_tolerance_5015+2*outlet_wall_thickness_5015, main_dz_5015+outlet_tolerance_5015+2*outlet_wall_thickness_5015]);
+              translate([-e, (outlet_dy_5015-outlet_inner_dy_5015)/2+outlet_wall_thickness_5015, (main_dz_5015-outlet_inner_dz_5015)/2+outlet_wall_thickness_5015]) {
+                cube([outlet_wall_thickness_5015+2*e, outlet_inner_dy_5015+outlet_tolerance_5015, outlet_inner_dz_5015+outlet_tolerance_5015]);
               }
             }
           }
-          // +Y-face
+          // +y-face
           difference() {
             hull() {
-              translate([0, OUTLET_DY_5015+OUTLET_TOLERANCE_5015+OUTLET_WALL_THICKNESS_5015, 0]) {
-                cube([-OUTLET_X_5015+OUTLET_WALL_THICKNESS_5015, OUTLET_WALL_THICKNESS_5015, OUTLET_WALL_THICKNESS_5015]);
-                translate([0, 0, -MAIN_DZ_5015-OUTLET_TOLERANCE_5015-OUTLET_WALL_THICKNESS_5015]) {
-                  cube([OUTLET_WALL_THICKNESS_5015+(-OUTLET_X_5015/2), OUTLET_WALL_THICKNESS_5015, MAIN_DZ_5015+OUTLET_TOLERANCE_5015+OUTLET_WALL_THICKNESS_5015+e]);
+              translate([0, outlet_dy_5015+outlet_tolerance_5015+outlet_wall_thickness_5015, 0]) {
+                cube([-outlet_x_5015+outlet_wall_thickness_5015, outlet_wall_thickness_5015, outlet_wall_thickness_5015]);
+                translate([0, 0, -main_dz_5015-outlet_tolerance_5015-outlet_wall_thickness_5015]) {
+                  cube([outlet_wall_thickness_5015+(-outlet_x_5015/2), outlet_wall_thickness_5015, main_dz_5015+outlet_tolerance_5015+outlet_wall_thickness_5015+e]);
                 }
               }
             }
-            translate([OUTLET_WALL_THICKNESS_5015, OUTLET_DY_5015+OUTLET_TOLERANCE_5015+OUTLET_WALL_THICKNESS_5015-e, -MAIN_DZ_5015/2-OUTLET_LATCH_HOLE_DZ/2]) {
-              cube([OUTLET_LATCH_HOLE_DX, OUTLET_WALL_THICKNESS_5015+2*e, OUTLET_LATCH_HOLE_DZ]);
+            translate([outlet_wall_thickness_5015, outlet_dy_5015+outlet_tolerance_5015+outlet_wall_thickness_5015-e, -main_dz_5015/2-outlet_latch_hole_dz/2]) {
+              cube([outlet_latch_hole_dx, outlet_wall_thickness_5015+2*e, outlet_latch_hole_dz]);
             }
           }
-          // -Z-face
+          // -z-face
           hull() {
-            translate([0, OUTLET_DY_5015+OUTLET_TOLERANCE_5015+OUTLET_WALL_THICKNESS_5015, -MAIN_DZ_5015-OUTLET_TOLERANCE_5015-OUTLET_WALL_THICKNESS_5015]) {
-              cube([OUTLET_WALL_THICKNESS_5015+(-OUTLET_X_5015/2), OUTLET_WALL_THICKNESS_5015, OUTLET_WALL_THICKNESS_5015]);
+            translate([0, outlet_dy_5015+outlet_tolerance_5015+outlet_wall_thickness_5015, -main_dz_5015-outlet_tolerance_5015-outlet_wall_thickness_5015]) {
+              cube([outlet_wall_thickness_5015+(-outlet_x_5015/2), outlet_wall_thickness_5015, outlet_wall_thickness_5015]);
             }
-            translate([0, 0, -MAIN_DZ_5015-OUTLET_TOLERANCE_5015-OUTLET_WALL_THICKNESS_5015]) {
-              cube([2*OUTLET_WALL_THICKNESS_5015, OUTLET_DY_5015+OUTLET_TOLERANCE_5015+2*OUTLET_WALL_THICKNESS_5015, OUTLET_WALL_THICKNESS_5015]);
+            translate([0, 0, -main_dz_5015-outlet_tolerance_5015-outlet_wall_thickness_5015]) {
+              cube([2*outlet_wall_thickness_5015, outlet_dy_5015+outlet_tolerance_5015+2*outlet_wall_thickness_5015, outlet_wall_thickness_5015]);
             }
           }
         }
-        // Nozzle
-        translate([OUTLET_X_5015-OUTLET_WALL_THICKNESS_5015, OUTLET_Y_5015-OUTLET_DY_5015-OUTLET_TOLERANCE_5015/2+(OUTLET_DY_5015-OUTLET_INNER_DY_5015)/2, -MAIN_DZ_5015-OUTLET_TOLERANCE_5015+(MAIN_DZ_5015-OUTLET_INNER_DZ_5015)/2]) {
+        // nozzle
+        translate([outlet_x_5015-outlet_wall_thickness_5015, outlet_y_5015-outlet_dy_5015-outlet_tolerance_5015/2+(outlet_dy_5015-outlet_inner_dy_5015)/2, -main_dz_5015-outlet_tolerance_5015+(main_dz_5015-outlet_inner_dz_5015)/2]) {
           left_nozzle();
         }
       }
@@ -132,23 +132,23 @@ module fan_5015_hood(connector_e3d_dy, include_fan=false) {
 }
 
 module left_nozzle() {
-  OUTLET_AREA = OUTLET_INNER_DY_5015 * OUTLET_INNER_DZ_5015;
-  OUTLET_CLEARANCE = 1;
-  OUTLET_NOZZLE_EXIT_DX = DUCT_DY_5015 - OUTLET_CLEARANCE - OUTLET_WALL_THICKNESS_5015;
-  OUTLET_NOZZLE_EXIT_DY = (4*OUTLET_AREA)/(PI*OUTLET_NOZZLE_EXIT_DX);
+  outlet_area = outlet_inner_dy_5015 * outlet_inner_dz_5015;
+  outlet_clearance = 1;
+  outlet_nozzle_exit_dx = duct_dy_5015 - outlet_clearance - outlet_wall_thickness_5015;
+  outlet_nozzle_exit_dy = (4*outlet_area)/(PI*outlet_nozzle_exit_dx);
 
   difference() {
     // exterior
     hull() {
-      TOTAL_DZ = OUTLET_INNER_DZ_5015 + OUTLET_TOLERANCE_5015 + 2*OUTLET_WALL_THICKNESS_5015;
-      translate([0, -OUTLET_WALL_THICKNESS_5015+e, 0]) {
-        for(i = [0:TOTAL_DZ/40:TOTAL_DZ]) {
-          dx = (OUTLET_NOZZLE_EXIT_DX/TOTAL_DZ)*sqrt(pow(TOTAL_DZ, 2)-pow(i, 2)) + OUTLET_WALL_THICKNESS_5015+e;
-          dy = (OUTLET_INNER_DY_5015+OUTLET_TOLERANCE_5015)*(i/TOTAL_DZ)+OUTLET_NOZZLE_EXIT_DY*(TOTAL_DZ-i)/TOTAL_DZ+2*OUTLET_WALL_THICKNESS_5015;
-          translate([0, 0, i-OUTLET_WALL_THICKNESS_5015]) {
-            cube([OUTLET_WALL_THICKNESS_5015+e, dy, e]);
+      total_dz = outlet_inner_dz_5015 + outlet_tolerance_5015 + 2*outlet_wall_thickness_5015;
+      translate([0, -outlet_wall_thickness_5015+e, 0]) {
+        for(i = [0:total_dz/40:total_dz]) {
+          dx = (outlet_nozzle_exit_dx/total_dz)*sqrt(pow(total_dz, 2)-pow(i, 2)) + outlet_wall_thickness_5015+e;
+          dy = (outlet_inner_dy_5015+outlet_tolerance_5015)*(i/total_dz)+outlet_nozzle_exit_dy*(total_dz-i)/total_dz+2*outlet_wall_thickness_5015;
+          translate([0, 0, i-outlet_wall_thickness_5015]) {
+            cube([outlet_wall_thickness_5015+e, dy, e]);
           }
-          translate([e, dy/2, i-OUTLET_WALL_THICKNESS_5015]) {
+          translate([e, dy/2, i-outlet_wall_thickness_5015]) {
             // cube([dx+e, dy, e]);
             scale([2*dx, dy, 1]) {
               difference() {
@@ -164,11 +164,11 @@ module left_nozzle() {
     }
     // subtracted interior
     hull() {
-      TOTAL_DZ = OUTLET_INNER_DZ_5015 + OUTLET_TOLERANCE_5015 + OUTLET_WALL_THICKNESS_5015+e;
-      for(i = [0:TOTAL_DZ/10:TOTAL_DZ]) {
-        dx = (OUTLET_NOZZLE_EXIT_DX/TOTAL_DZ)*sqrt(pow(TOTAL_DZ, 2)-pow(i, 2))+e;
-        dy = (OUTLET_INNER_DY_5015+OUTLET_TOLERANCE_5015)*(i/TOTAL_DZ)+OUTLET_NOZZLE_EXIT_DY*(TOTAL_DZ-i)/TOTAL_DZ;
-        translate([e, dy/2, i-OUTLET_WALL_THICKNESS_5015-e]) {
+      total_dz = outlet_inner_dz_5015 + outlet_tolerance_5015 + outlet_wall_thickness_5015+e;
+      for(i = [0:total_dz/10:total_dz]) {
+        dx = (outlet_nozzle_exit_dx/total_dz)*sqrt(pow(total_dz, 2)-pow(i, 2))+e;
+        dy = (outlet_inner_dy_5015+outlet_tolerance_5015)*(i/total_dz)+outlet_nozzle_exit_dy*(total_dz-i)/total_dz;
+        translate([e, dy/2, i-outlet_wall_thickness_5015-e]) {
           scale([2*dx, dy, 1]) {
             difference() {
               cylinder(d=1, h=e, $fn=30);
@@ -180,7 +180,7 @@ module left_nozzle() {
         }
       }
     }
-    cube([OUTLET_WALL_THICKNESS_5015+2*e, OUTLET_INNER_DY_5015+OUTLET_TOLERANCE_5015, OUTLET_INNER_DZ_5015+OUTLET_TOLERANCE_5015]);
+    cube([outlet_wall_thickness_5015+2*e, outlet_inner_dy_5015+outlet_tolerance_5015, outlet_inner_dz_5015+outlet_tolerance_5015]);
   }
 }
 

@@ -10,69 +10,69 @@ include <backing.scad>;
 $fa=0.5;
 $fs=0.5;
 
-TAB_DZ=9;
+tab_dz=9;
 
-EXTRA_X_SPACE = 4;
-LEFT_CONNECTOR_X = SADDLE_X-BOX_SIZE_4010/2-EXTRA_X_SPACE-MAIN_DZ_5015-INTAKE_5015_SIDE_THICKNESS;
-LEFT_CONNECTOR_Y = -PLATE_HEIGHT+PIN_DY+PIN_DIA;
-LEFT_CONNECTOR_COORDS = [LEFT_CONNECTOR_X, LEFT_CONNECTOR_Y, 0];
-CONNECTOR_E3D_DY = SADDLE_Y - E3D_TOTAL_DY - LEFT_CONNECTOR_Y;
+extra_x_space = 4;
+left_connector_x = saddle_x-box_size_4010/2-extra_x_space-main_dz_5015-intake_5015_side_thickness;
+left_connector_y = -plate_height+pin_dy+pin_dia;
+left_connector_coords = [left_connector_x, left_connector_y, 0];
+connector_e3d_dy = saddle_y - e3d_total_dy - left_connector_y;
 
 
 gantry_plate();
-e3d_clamp_saddle(SADDLE_COORDS);
-e3d_clamp_u(SADDLE_COORDS);
-accessory_backing(left_connector_coords=LEFT_CONNECTOR_COORDS);
-e3d_v6([SADDLE_X, SADDLE_Y, E3D_Z]);
+e3d_clamp_saddle(saddle_coords);
+e3d_clamp_u(saddle_coords);
+accessory_backing(left_connector_coords=left_connector_coords);
+e3d_v6([saddle_x, saddle_y, e3d_z]);
 // 4010 fan
-*translate([PEG_AVG_X, SADDLE_Y-SADDLE_DY/2-BOX_SIZE_4010/2, E3D_Z+SADDLE_DX/2+2]) {
+*translate([peg_avg_x, saddle_y-saddle_dy/2-box_size_4010/2, e3d_z+saddle_dx/2+2]) {
   fan_4010();
 }
 // 5015 fans
-translate([0, SADDLE_Y-E3D_TOTAL_DY, E3D_Z]) {
-  translate([LEFT_CONNECTOR_X, 0, 0, ]) { // +MAIN_DZ_5015+PIN_DIA/2, 0, 0]) {
+translate([0, saddle_y-e3d_total_dy, e3d_z]) {
+  translate([left_connector_x, 0, 0, ]) { // +main_dz_5015+pin_dia/2, 0, 0]) {
     rotate([-90, 0, 90]) {
-      fan_5015_hood(connector_e3d_dy=CONNECTOR_E3D_DY, include_fan=true);
+      fan_5015_hood(connector_e3d_dy=connector_e3d_dy, include_fan=true);
     }
   }
-  *translate([SADDLE_X+BOX_SIZE_4010/2+MAIN_DZ_5015+EXTRA_X_SPACE, 0, 0]) {
+  *translate([saddle_x+box_size_4010/2+main_dz_5015+extra_x_space, 0, 0]) {
     rotate([-90, 0, 90]) {
-      fan_5015_hood(connector_e3d_dy=CONNECTOR_E3D_DY, include_fan=true);
+      fan_5015_hood(connector_e3d_dy=connector_e3d_dy, include_fan=true);
     }
   }
 }
 
-// OEM hot-end tip marker
-*translate([PEG_AVG_X, -76, 11]) {
+// oem hot-end tip marker
+*translate([peg_avg_x, -76, 11]) {
   color([0, 1, 0]) sphere(r=0.25);
 }
 
-// Screws
-translate([0, 0, PEG_HOLE_DZ+PEG_SCREW_SPACE]) {
-  translate(PEG_1_COORDS) {
+// screws
+translate([0, 0, peg_hole_dz+peg_screw_space]) {
+  translate(peg_1_coords) {
     screw("M3x5");
   }
-  translate(PEG_2_COORDS) {
+  translate(peg_2_coords) {
     screw("M3x5");
   }
 }
 translate([0, 0, 3]) {
-  translate(HOLE_1_COORDS) {
+  translate(hole_1_coords) {
     screw("M3x5");
   }
-  translate(HOLE_2_COORDS) {
+  translate(hole_2_coords) {
     screw("M3x5");
   }
 }
-translate(SADDLE_COORDS) {
-  translate([0, 0, SADDLE_DZ-SADDLE_OVERREACH]) {
-    translate([-SADDLE_DX/2+CLAMP_SCREW_INSET, -COLLAR_SEG_1_DY-COLLAR_SEG_2_DY/2, -U_GAP-e]) {
-      translate([0, 0, U_SCREW_DZ]) {    
+translate(saddle_coords) {
+  translate([0, 0, saddle_dz-saddle_overreach]) {
+    translate([-saddle_dx/2+clamp_screw_inset, -collar_seg_1_dy-collar_seg_2_dy/2, -u_gap-e]) {
+      translate([0, 0, u_screw_dz]) {    
         screw("M3x16");    
       }    
     }    
-    translate([SADDLE_DX/2-CLAMP_SCREW_INSET, -COLLAR_SEG_1_DY-COLLAR_SEG_2_DY/2, -U_GAP-e]) {
-      translate([0, 0, U_SCREW_DZ]) {    
+    translate([saddle_dx/2-clamp_screw_inset, -collar_seg_1_dy-collar_seg_2_dy/2, -u_gap-e]) {
+      translate([0, 0, u_screw_dz]) {    
         screw("M3x16");    
       }    
     }    
