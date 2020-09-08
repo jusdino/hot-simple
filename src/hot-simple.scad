@@ -32,7 +32,7 @@ e3d_v6([saddle_x, saddle_y, e3d_z]);
 translate([0, saddle_y-e3d_total_dy, e3d_z]) {
   translate([left_connector_x, 0, 0, ]) { // +main_dz_5015+pin_dia/2, 0, 0]) {
     rotate([-90, 0, 90]) {
-      fan_5015_hood(connector_e3d_dy=connector_e3d_dy, include_fan=true);
+      !fan_5015_hood(connector_e3d_dy=connector_e3d_dy, include_fan=false);
     }
   }
   *translate([saddle_x+box_size_4010/2+main_dz_5015+extra_x_space, 0, 0]) {

@@ -3,7 +3,7 @@ include <connectors.scad>;
 
 e = 0.01;
 
-intake_5015_wall_thickness = 0.48;
+intake_5015_wall_thickness = 0.6;
 intake_5015_rim_thickness = 1.2;
 intake_5015_side_thickness = 3+intake_5015_wall_thickness;
 outlet_wall_thickness_5015 = 1.6;
@@ -161,7 +161,7 @@ module left_nozzle() {
       translate([0, -outlet_wall_thickness_5015+e, 0]) {
         hull() {
           nozzle_section(0, outer_final_dy, outer_final_dx, true);
-          translate([-outer_final_dx, outer_final_dy/4, -total_dz]) {
+          translate([-outer_final_dx+outlet_wall_thickness_5015, outer_final_dy/4, -total_dz]) {
             nozzle_section(0, outer_final_dy, outer_final_dx, true);
           }
         }
@@ -187,7 +187,7 @@ module left_nozzle() {
     // subtractive segment 2
     hull() {
       nozzle_section(0, interior_final_dy, interior_final_dx, false);
-      translate([-interior_final_dx-outlet_wall_thickness_5015, interior_final_dy/4, -total_dz-e]) {
+      translate([-interior_final_dx, interior_final_dy/4, -total_dz-e]) {
         nozzle_section(0, interior_final_dy, interior_final_dx, false);
       }
     }
