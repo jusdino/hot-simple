@@ -8,7 +8,7 @@ intake_5015_rim_thickness = 1.2;
 intake_5015_side_thickness = 3+intake_5015_wall_thickness;
 outlet_wall_thickness_5015 = 1.6;
 outlet_nozzle_overlap_5015 = 1.45;
-duct_dy_5015 = 11;
+duct_dy_5015 = 10;
 
 module fan_5015_hood(connector_e3d_dy, include_fan=false) {
   intake_5015_cover_dia = main_dia_5015 - 4;
@@ -139,48 +139,80 @@ module left_nozzle() {
 
   difference() {
     // exterior
-    hull() {
-      total_dz = outlet_inner_dz_5015 + outlet_tolerance_5015 + 2*outlet_wall_thickness_5015;
-      translate([0, -outlet_wall_thickness_5015+e, 0]) {
-        for(i = [0:total_dz/40:total_dz]) {
-          dx = (outlet_nozzle_exit_dx/total_dz)*sqrt(pow(total_dz, 2)-pow(i, 2)) + outlet_wall_thickness_5015+e;
-          dy = (outlet_inner_dy_5015+outlet_tolerance_5015)*(i/total_dz)+outlet_nozzle_exit_dy*(total_dz-i)/total_dz+2*outlet_wall_thickness_5015;
-          translate([0, 0, i-outlet_wall_thickness_5015]) {
-            cube([outlet_wall_thickness_5015+e, dy, e]);
+    total_dz = outlet_inner_dz_5015 + outlet_tolerance_5015 + 2*outlet_wall_thickness_5015;
+    outer_initial_dy = outlet_inner_dy_5015+outlet_tolerance_5015+2*outlet_wall_thickness_5015;
+    outer_final_dy = outlet_nozzle_exit_dy+2*outlet_wall_thickness_5015;
+    outer_final_dx = outlet_nozzle_exit_dx+outlet_wall_thickness_5015+e;
+    union() {
+      // additive segment 1
+      hull() {
+        total_dz = outlet_inner_dz_5015 + outlet_tolerance_5015 + 2*outlet_wall_thickness_5015;
+        outer_initial_dy = outlet_inner_dy_5015+outlet_tolerance_5015+2*outlet_wall_thickness_5015;
+        outer_final_dy = outlet_nozzle_exit_dy+2*outlet_wall_thickness_5015;
+        translate([0, -outlet_wall_thickness_5015+e, 0]) {
+          for(i = [0:total_dz/10:total_dz]) {
+            dx = (outlet_nozzle_exit_dx/total_dz)*sqrt(pow(total_dz, 2)-pow(i, 2)) + outlet_wall_thickness_5015+e;
+            dy = (outer_initial_dy)*(i/total_dz)+outer_final_dy*(total_dz-i)/total_dz;
+            nozzle_section(i, dy, dx, true);
           }
-          translate([e, dy/2, i-outlet_wall_thickness_5015]) {
-            // cube([dx+e, dy, e]);
-            scale([2*dx, dy, 1]) {
-              difference() {
-                cylinder(d=1, h=e, $fn=20);
-                translate([0, -e-1/2, -e]) {
-                  cube([1/2+e, 1+2*e, 3*e]);
-                }
-              }
-            }
+        }
+      }
+      // additive segment 2
+      translate([0, -outlet_wall_thickness_5015+e, 0]) {
+        hull() {
+          nozzle_section(0, outer_final_dy, outer_final_dx, true);
+          translate([-outer_final_dx, outer_final_dy/4, -total_dz]) {
+            nozzle_section(0, outer_final_dy, outer_final_dx, true);
           }
         }
       }
     }
     // subtracted interior
+    interior_initial_dy = outlet_inner_dy_5015+outlet_tolerance_5015;
+    interior_final_dy = outlet_nozzle_exit_dy;
+    // subtractive segment 1
     hull() {
       total_dz = outlet_inner_dz_5015 + outlet_tolerance_5015 + outlet_wall_thickness_5015+e;
+      interior_initial_dy = outlet_inner_dy_5015+outlet_tolerance_5015;
+      interior_final_dy = outlet_nozzle_exit_dy;
       for(i = [0:total_dz/10:total_dz]) {
         dx = (outlet_nozzle_exit_dx/total_dz)*sqrt(pow(total_dz, 2)-pow(i, 2))+e;
-        dy = (outlet_inner_dy_5015+outlet_tolerance_5015)*(i/total_dz)+outlet_nozzle_exit_dy*(total_dz-i)/total_dz;
-        translate([e, dy/2, i-outlet_wall_thickness_5015-e]) {
-          scale([2*dx, dy, 1]) {
-            difference() {
-              cylinder(d=1, h=e, $fn=30);
-              translate([0, -e-1/2, -e]) {
-                cube([1/2+e, 1+2*e, 3*e]);
-              }
-            }
+        dy = (interior_initial_dy)*(i/total_dz)+interior_final_dy*(total_dz-i)/total_dz;
+        translate([0, 0, -e]) {
+          nozzle_section(i, dy, dx, false);
+        }
+      }
+    }
+    interior_final_dx = outlet_nozzle_exit_dx+e;
+    // subtractive segment 2
+    hull() {
+      nozzle_section(0, interior_final_dy, interior_final_dx, false);
+      translate([-interior_final_dx-outlet_wall_thickness_5015, interior_final_dy/4, -total_dz-e]) {
+        nozzle_section(0, interior_final_dy, interior_final_dx, false);
+      }
+    }
+    // Cut over print bed
+    translate([-2*outer_final_dx, -outlet_wall_thickness_5015+e, -total_dz-outlet_wall_thickness_5015-e]) {
+      cube([outer_final_dx, (5/4)*outer_final_dy, 2*total_dz+e]);
+    }
+    cube([outlet_wall_thickness_5015+2*e, outlet_inner_dy_5015+outlet_tolerance_5015, outlet_inner_dz_5015+outlet_tolerance_5015]);
+  }
+  module nozzle_section(i, dy, dx, additive=true) {
+    if (additive) {
+      translate([0, 0, i-outlet_wall_thickness_5015]) {
+        cube([outlet_wall_thickness_5015+e, dy, e]);
+      }
+    }
+    translate([e, dy/2, i-outlet_wall_thickness_5015]) {
+      scale([2*dx, dy, 1]) {
+        difference() {
+          cylinder(d=1, h=e, $fn=20);
+          translate([0, -e-1/2, -e]) {
+            cube([1/2+e, 1+2*e, 3*e]);
           }
         }
       }
     }
-    cube([outlet_wall_thickness_5015+2*e, outlet_inner_dy_5015+outlet_tolerance_5015, outlet_inner_dz_5015+outlet_tolerance_5015]);
   }
 }
 
